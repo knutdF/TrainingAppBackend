@@ -7,5 +7,5 @@ class TrainingSessionService(private val trainingSessionRepository: InMemoryTrai
     suspend fun createSession(session: TrainingSession): Any? = trainingSessionRepository.createSession(session)
     suspend fun getSessionById(id: String): Any? = trainingSessionRepository.getSessionById(id)
     suspend fun updateSession(session: TrainingSession): Any? = trainingSessionRepository.updateSession(session)
-    suspend fun deleteSession(id: String): Boolean = trainingSessionRepository.deleteSession(id)
+    suspend fun deleteSession(id: String): Unit = trainingSessionRepository.deleteSession(id)
 }

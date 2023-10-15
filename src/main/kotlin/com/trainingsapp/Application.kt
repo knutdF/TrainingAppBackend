@@ -108,7 +108,7 @@ class InMemoryDocumentRepository<Document> {
 
     }
 
-    fun deleteDocument(id: Document): Boolean {
+    fun deleteDocument(id: Document) {
 
     }
 
