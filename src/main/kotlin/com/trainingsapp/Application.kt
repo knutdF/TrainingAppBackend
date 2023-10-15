@@ -4,6 +4,7 @@ import com.trainingsapp.trainigsapp.api.departmentApi
 import com.trainingsapp.trainigsapp.api.documentApi
 import com.trainingsapp.trainigsapp.api.trainingSessionApi
 import com.trainingsapp.trainigsapp.api.userApi
+import com.trainingsapp.trainigsapp.model.User
 import com.trainingsapp.trainigsapp.service.DepartmentService
 import com.trainingsapp.trainigsapp.service.DocumentService
 import com.trainingsapp.trainigsapp.service.TrainingSessionService
@@ -57,41 +58,53 @@ fun Application.module() {
 }
 
 class InMemoryDepartmentRepository<Department> {
-    fun createDepartment(department: Department): Department {
+    fun createDepartment(department: Department) {
 
     }
 
-    fun getDepartmentById(id: Department): Department? {
+    fun getDepartmentById(id: Department) {
 
     }
 
-    fun updateDepartment(department: Department): Department {
+    fun updateDepartment(department: Department) {
 
     }
 
-    fun deleteDepartment(id: Department): Boolean {
+    fun deleteDepartment(id: Department) {
 
     }
 
 }
 
 class InMemoryTrainingSessionRepository<TrainingSession> {
-    fun createSession(session: TrainingSession): TrainingSession {
+    fun createSession(session: TrainingSession) {
+
+    }
+
+    fun getSessionById(id: TrainingSession) {
+
+    }
+
+    fun updateSession(session: TrainingSession) {
+
+    }
+
+    fun deleteSession(id: TrainingSession) {
 
     }
 
 }
 
 class InMemoryDocumentRepository<Document> {
-    fun createDocument(document: Document): Document {
+    fun createDocument(document: Document) {
 
     }
 
-    fun getDocumentById(id: Document): Document? {
+    fun getDocumentById(id: Document) {
 
     }
 
-    fun updateDocument(document: Document): Document {
+    fun updateDocument(document: Document) {
 
     }
 
@@ -102,19 +115,19 @@ class InMemoryDocumentRepository<Document> {
 }
 
 class InMemoryUserRepository {
-    fun createUser(user: User): User {
+    fun createUser(user: User) {
 
     }
 
-    fun getUserById(id: String): User? {
+    fun getUserById(id: String) {
 
     }
 
-    fun updateUser(user: User): User {
+    fun updateUser(user: User) {
 
     }
 
-    fun deleteUser(id: String): Boolean {
+    fun deleteUser(id: String) {
 
     }
 
