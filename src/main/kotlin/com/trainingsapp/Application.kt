@@ -35,8 +35,8 @@ fun Application.module() {
 
     // Erstelle Instanzen deiner Repositories
     val userRepository = InMemoryUserRepository() // Beispiel: du müsstest eine Implementierung schreiben
-    val documentRepository = InMemoryDocumentRepository() // Beispiel: du müsstest eine Implementierung schreiben
-    val trainingSessionRepository = InMemoryTrainingSessionRepository() // Beispiel: du müsstest eine Implementierung schreiben
+    val documentRepository = InMemoryDocumentRepository<Any>() // Beispiel: du müsstest eine Implementierung schreiben
+    val trainingSessionRepository = InMemoryTrainingSessionRepository<Any>() // Beispiel: du müsstest eine Implementierung schreiben
     val departmentRepository = InMemoryDepartmentRepository<Any>() // Beispiel: du müsstest eine Implementierung schreiben
 
     // Erstelle Instanzen deiner Services, injiziere die Repositories
@@ -75,15 +75,48 @@ class InMemoryDepartmentRepository<Department> {
 
 }
 
-class InMemoryTrainingSessionRepository {
+class InMemoryTrainingSessionRepository<TrainingSession> {
+    fun createSession(session: TrainingSession): TrainingSession {
+
+    }
 
 }
 
-class InMemoryDocumentRepository {
+class InMemoryDocumentRepository<Document> {
+    fun createDocument(document: Document): Document {
+
+    }
+
+    fun getDocumentById(id: Document): Document? {
+
+    }
+
+    fun updateDocument(document: Document): Document {
+
+    }
+
+    fun deleteDocument(id: Document): Boolean {
+
+    }
 
 }
 
 class InMemoryUserRepository {
+    fun createUser(user: User): User {
+
+    }
+
+    fun getUserById(id: String): User? {
+
+    }
+
+    fun updateUser(user: User): User {
+
+    }
+
+    fun deleteUser(id: String): Boolean {
+
+    }
 
 }
 
