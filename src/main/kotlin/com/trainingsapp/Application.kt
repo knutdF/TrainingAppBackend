@@ -33,7 +33,7 @@ fun Application.module() {
     // ... (Installations- und Konfigurationscode)
 
     // Redis-Verbindung konfigurieren
-    val redisClient = RedisClient.create("redis://localhost:6379") // Ändere den Connection-String nach deinen Anforderungen
+    val redisClient = RedisClient.create("redis://localhost:6541") // Ändere den Connection-String nach deinen Anforderungen
     val redisConnection: StatefulRedisConnection<String, String> = redisClient.connect()
     val redisCommands: RedisCommands<String, String> = redisConnection.sync()
 
@@ -54,7 +54,7 @@ fun Application.module() {
 
 // ... (der Rest deiner Code-Datei, inklusive `main()` Methode)
 
-fun Application.module() {
+fun Application.main() {
     // Install Features
     install(ContentNegotiation) {
         jackson {
