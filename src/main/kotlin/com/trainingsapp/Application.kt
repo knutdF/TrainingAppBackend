@@ -4,6 +4,10 @@ import com.trainingsapp.trainigsapp.api.departmentApi
 import com.trainingsapp.trainigsapp.api.documentApi
 import com.trainingsapp.trainigsapp.api.trainingSessionApi
 import com.trainingsapp.trainigsapp.api.userApi
+import com.trainingsapp.trainigsapp.service.DepartmentService
+import com.trainingsapp.trainigsapp.service.DocumentService
+import com.trainingsapp.trainigsapp.service.TrainingSessionService
+import com.trainingsapp.trainigsapp.service.UserService
 
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
@@ -33,7 +37,7 @@ fun Application.module() {
     val userRepository = InMemoryUserRepository() // Beispiel: du müsstest eine Implementierung schreiben
     val documentRepository = InMemoryDocumentRepository() // Beispiel: du müsstest eine Implementierung schreiben
     val trainingSessionRepository = InMemoryTrainingSessionRepository() // Beispiel: du müsstest eine Implementierung schreiben
-    val departmentRepository = InMemoryDepartmentRepository() // Beispiel: du müsstest eine Implementierung schreiben
+    val departmentRepository = InMemoryDepartmentRepository<Any>() // Beispiel: du müsstest eine Implementierung schreiben
 
     // Erstelle Instanzen deiner Services, injiziere die Repositories
     val userService = UserService(userRepository)
@@ -50,6 +54,37 @@ fun Application.module() {
 
         // Hier könntest du zusätzliche Routen definieren
     }
+}
+
+class InMemoryDepartmentRepository<Department> {
+    fun createDepartment(department: Department): Department {
+
+    }
+
+    fun getDepartmentById(id: Department): Department? {
+
+    }
+
+    fun updateDepartment(department: Department): Department {
+
+    }
+
+    fun deleteDepartment(id: Department): Boolean {
+
+    }
+
+}
+
+class InMemoryTrainingSessionRepository {
+
+}
+
+class InMemoryDocumentRepository {
+
+}
+
+class InMemoryUserRepository {
+
 }
 
 fun main() {
