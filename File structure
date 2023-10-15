@@ -1,0 +1,49 @@
+src/
+│
+├── main/
+│   ├── kotlin/
+│   │   ├── com/
+│   │   │   ├── myapp/
+│   │   │   │   ├── model/
+│   │   │   │   │   ├── User.kt
+│   │   │   │   │   ├── Document.kt
+│   │   │   │   │   ├── TrainingSession.kt
+│   │   │   │   │   └── Department.kt
+│   │   │   │   │
+│   │   │   │   ├── repository/
+│   │   │   │   │   ├── UserRepository.kt
+│   │   │   │   │   ├── DocumentRepository.kt
+│   │   │   │   │   ├── TrainingRepository.kt
+│   │   │   │   │   └── DepartmentRepository.kt
+│   │   │   │   │
+│   │   │   │   ├── service/
+│   │   │   │   │   ├── UserService.kt
+│   │   │   │   │   ├── DocumentService.kt
+│   │   │   │   │   ├── TrainingService.kt
+│   │   │   │   │   └── DepartmentService.kt
+│   │   │   │   │
+│   │   │   │   ├── viewmodel/
+│   │   │   │   │   ├── UserViewModel.kt
+│   │   │   │   │   ├── DocumentViewModel.kt
+│   │   │   │   │   ├── TrainingViewModel.kt
+│   │   │   │   │   └── DepartmentViewModel.kt
+│   │   │   │   │
+│   │   │   │   └── api/
+│   │   │   │       ├── UserRoutes.kt
+│   │   │   │       ├── DocumentRoutes.kt
+│   │   │   │       ├── TrainingRoutes.kt
+│   │   │   │       └── DepartmentRoutes.kt
+│   │   │   │
+│   │   │   └── Application.kt
+│   │   │
+│   │   └── resources/
+│   │       ├── application.conf
+│   │       └── logback.xml
+│   │
+│   └── test/
+│       └── kotlin/
+│           └── com/
+│               └── myapp/
+│                   └── ...
+├── build.gradle.kts
+└── settings.gradle.kts
