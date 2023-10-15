@@ -1,7 +1,7 @@
 package com.trainingsapp.trainigsapp.service
 
 import com.trainingsapp.trainigsapp.model.TrainingSession
-import com.trainingsapp.trainingsapp.InMemoryTrainingSessionRepository
+import com.trainingsapp.InMemoryTrainingSessionRepository
 
 class TrainingSessionService(private val trainingSessionRepository: InMemoryTrainingSessionRepository<Any>) {
     suspend fun createSession(session: TrainingSession): Any? = trainingSessionRepository.createSession(session)
