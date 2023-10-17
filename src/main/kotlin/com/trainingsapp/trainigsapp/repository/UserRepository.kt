@@ -6,21 +6,25 @@ import redis.clients.jedis.Jedis
 class UserRepository(private val redis: Jedis) {
 
     fun createUser(user: User) {
-        // Verwende `HSET` um den Benutzer zu speichern
-        redis.hset("user:${user.id}", "id", user.id)
-        redis.hset("user:${user.id}", "name", user.username) // Angenommen, User hat ein Attribut `name`
-        // Füge weitere Attribute hinzu, falls notwendig
+        // Verwende `hmset` um alle Benutzerattribute in einem Aufruf zu setzen
+        val userMap = mapOf(
+            "id" to user.id,
+            "username" to user.username
+        )
+        redis.hmset("user:${user.id}", userMap)
     }
 
     fun getUserById(id: String): User? {
-        // Verwende `HGET` um den Benutzer abzurufen
-        val userId = redis.hget("user:$id", "id")
-        val userName = redis.hget("user:$id", "name")
+        // Verwende `hmget` um alle Benutzerattribute in einem Aufruf abzurufen
+        val attributes = listOf("id", "username")
+        val values = redis.hmget("user:$id", attributes)
+
+        val userId = values[0]
+        val userName = values[1]
 
         if (userId != null && userName != null) {
-            return User(id = userId, name = userName) // Erstelle ein User-Objekt aus den abgerufenen Daten
+            return User(id = userId, username = userName) // Erstelle ein User-Objekt aus den abgerufenen Daten
         }
         return null
     }
-
 }
