@@ -35,5 +35,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.lettuce:lettuce-core:6.2.6.RELEASE")
     testImplementation("io.ktor:ktor-server-tests-jvm")
+    implementation ("redis.clients:jedis:4.3.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

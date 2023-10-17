@@ -1,9 +1,9 @@
 package com.trainingsapp.trainigsapp.repository
 
 import com.trainingsapp.trainigsapp.model.TrainingSession
-import io.lettuce.core.api.sync.RedisCommands
+import redis.clients.jedis.Jedis
 
-class TrainingSessionRepository(private val redis: RedisCommands<String, String>) {
+class TrainingSessionRepository(private val redis: Jedis) {
 
     fun createSession(session: TrainingSession) {
         // Beispiel: Serialisieren und speichern Sie das TrainingSession-Objekt in Redis

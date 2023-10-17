@@ -1,9 +1,9 @@
 package com.trainingsapp.trainigsapp.repository
 
 import com.trainingsapp.trainigsapp.model.Department
-import io.lettuce.core.api.sync.RedisCommands
+import redis.clients.jedis.Jedis
 
-class DepartmentRepository(private val redis: RedisCommands<String, String>) {
+class DepartmentRepository(private val redis: Jedis) {
 
     fun createDepartment(department: Department) {
         // Beispiel: Serialisieren und speichern Sie das Department-Objekt in Redis

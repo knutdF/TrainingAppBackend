@@ -24,33 +24,28 @@ import io.ktor.server.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.application.ApplicationStopping
-import io.lettuce.core.RedisClient
-import io.lettuce.core.api.StatefulRedisConnection
-import io.lettuce.core.api.sync.RedisCommands
-import io.ktor.server.application.ApplicationEvents
+import redis.clients.jedis.Jedis
 
 fun Application.module() {
     // ... (Installations- und Konfigurationscode)
 
     // Redis-Verbindung konfigurieren
-    val redisClient = RedisClient.create("redis://localhost:6541") // Ändere den Connection-String nach deinen Anforderungen
-    val redisConnection: StatefulRedisConnection<String, String> = redisClient.connect()
-    val redisCommands: RedisCommands<String, String> = redisConnection.sync()
+    val jedis = Jedis("localhost", 6379) // Ändere den Host und den Port nach deinen Anforderungen
 
     // Erstelle Instanzen deiner Repositories, injiziere die Redis-Verbindung
-    val userRepository = UserRepository(redisCommands) // Beispiel: du müsstest eine Implementierung schreiben
-    val documentRepository = DocumentRepository(redisCommands) // Beispiel: du müsstest eine Implementierung schreiben
-    val trainingSessionRepository = TrainingSessionRepository(redisCommands) // Beispiel: du müsstest eine Implementierung schreiben
-    val departmentRepository = DepartmentRepository(redisCommands) // Beispiel: du müsstest eine Implementierung schreiben
+    UserRepository(jedis) // Beispiel: du müsstest eine Implementierung schreiben
+    DocumentRepository(jedis) // Beispiel: du müsstest eine Implementierung schreiben
+    TrainingSessionRepository(jedis) // Beispiel: du müsstest eine Implementierung schreiben
+    DepartmentRepository(jedis) // Beispiel: du müsstest eine Implementierung schreiben
 
     // ... (der Rest deines bisherigen Codes)
 
-    // Event zum Schließen der Redis-Verbindung hinzufügen
+    // Event zum Schließen der Jedis-Verbindung hinzufügen
     environment.monitor.subscribe(ApplicationStopping) {
-        redisConnection.close()
-        redisClient.shutdown()
+        jedis.close()
     }
-}
+    }
+
 
 // ... (der Rest deiner Code-Datei, inklusive `main()` Methode)
 

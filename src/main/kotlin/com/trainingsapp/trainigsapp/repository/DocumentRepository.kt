@@ -1,9 +1,9 @@
 package com.trainingsapp.trainigsapp.repository
 
 import com.trainingsapp.trainigsapp.model.Document
-import io.lettuce.core.api.sync.RedisCommands
+import redis.clients.jedis.Jedis
 
-class DocumentRepository(private val redis: RedisCommands<String, String>) {
+class DocumentRepository(private val redis: Jedis) {
 
     fun createDocument(document: Document) {
         // Beispiel: Serialisieren Sie das Document-Objekt und speichern Sie es in Redis
