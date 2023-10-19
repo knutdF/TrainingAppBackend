@@ -24,11 +24,7 @@ fun Route.userApi(userService: UserService) {
 
             val id = call.parameters["id"] ?: throw IllegalArgumentException("ID is missing")
             val user = userService.getUserById(id)
-            if (user != null) {
-                call.respond(HttpStatusCode.OK, user) // Benutzerdaten als Antwort senden
-            } else {
-                call.respond(HttpStatusCode.NotFound) // Wenn kein Benutzer gefunden wurde
-            }
+            call.respond(HttpStatusCode.OK, user)
         }
 
         put {
