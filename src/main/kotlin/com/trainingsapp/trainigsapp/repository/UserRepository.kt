@@ -6,24 +6,37 @@ import redis.clients.jedis.Jedis
 class UserRepository(private val redis: Jedis) {
 
     fun createUser(user: User) {
-        // Verwende `hmset` um alle Benutzerattribute in einem Aufruf zu setzen
-        val userMap = mapOf(
-            "id" to user.id,
-            "username" to user.username
-        )
-        redis.hmset("user:${user.id}", userMap)
+        // Verwende `HSET` um den Benutzer zu speichern
+        redis.hset("user:${user.id}", "id", user.id)
+        redis.hset("user:${user.id}", "username", user.username) // Angenommen, User hat ein Attribut `username`
+        // Füge weitere Attribute hinzu, falls notwendig
+    }
+
+    fun updateUser(user: User) {
+        // Überprüfe, ob der Benutzer bereits existiert
+        if (redis.exists("user:${user.id}")) {
+            // Aktualisiere den Benutzer mit `HSET`
+            redis.hset("user:${user.id}", "id", user.id)
+            redis.hset("user:${user.id}", "username", user.username)
+        } else {
+            // Optional: Fehlermeldung, wenn der Benutzer nicht existiert
+            println("Benutzer mit ID ${user.id} existiert nicht.")
+        }
+    }
+
+    fun deleteUser(id: String) {
+        // Lösche den Benutzer aus Redis
+        redis.del("user:$id")
     }
 
     fun getUserById(id: String): User? {
-        // Verwende `hmget` um alle Benutzerattribute in einem Aufruf abzurufen
-        val attributes = listOf("id", "username")
-        val values = redis.hmget("user:$id", attributes)
-
-        val userId = values[0]
-        val userName = values[1]
+        // Verwende `HGET` um den Benutzer abzurufen
+        val userId = redis.hget("user:$id", "id")
+        val userName = redis.hget("user:$id", "username")
+        val userPassword = redis.hget("user:$id", "password")
 
         if (userId != null && userName != null) {
-            return User(id = userId, username = userName) // Erstelle ein User-Objekt aus den abgerufenen Daten
+            return User(id = userId, username = userName, password = userPassword) // Erstelle ein User-Objekt aus den abgerufenen Daten
         }
         return null
     }

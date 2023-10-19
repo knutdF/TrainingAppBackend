@@ -1,6 +1,5 @@
 package com.trainingsapp.trainigsapp.service
 
-
 import com.trainingsapp.trainigsapp.model.User
 import com.trainingsapp.InMemoryUserRepository
 

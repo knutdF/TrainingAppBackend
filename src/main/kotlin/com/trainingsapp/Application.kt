@@ -26,11 +26,14 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.application.ApplicationStopping
 import redis.clients.jedis.Jedis
 
+fun main() {
+    embeddedServer(Netty, port = 8081, host = "0.0.0.0", module = Application::module).start(wait = true)
+}
 fun Application.module() {
     // ... (Installations- und Konfigurationscode)
 
     // Redis-Verbindung konfigurieren
-    val jedis = Jedis("localhost", 6379) // Ändere den Host und den Port nach deinen Anforderungen
+    val jedis = Jedis("localhost", 6451) // Ändere den Host und den Port nach deinen Anforderungen
 
     // Erstelle Instanzen deiner Repositories, injiziere die Redis-Verbindung
     UserRepository(jedis) // Beispiel: du müsstest eine Implementierung schreiben
@@ -162,6 +165,4 @@ class InMemoryUserRepository {
 
 }
 
-fun main() {
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
-}
+
