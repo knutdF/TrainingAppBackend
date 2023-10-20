@@ -7,17 +7,22 @@ class UserRepository(private val redis: Jedis) {
 
     fun createUser(user: User) {
         // Verwende `HSET` um den Benutzer zu speichern
-        redis.hset("user:${user.id}", "id", user.id)
-        redis.hset("user:${user.id}", "username", user.username) // Angenommen, User hat ein Attribut `username`
-        // Füge weitere Attribute hinzu, falls notwendig
+        redis.hset("user:${user.id}", mapOf(
+            "id" to user.id,
+            "username" to user.username,
+            "email" to user.email // Füge das email-Attribut hinzu
+        ))
     }
 
     fun updateUser(user: User) {
         // Überprüfe, ob der Benutzer bereits existiert
         if (redis.exists("user:${user.id}")) {
             // Aktualisiere den Benutzer mit `HSET`
-            redis.hset("user:${user.id}", "id", user.id)
-            redis.hset("user:${user.id}", "username", user.username)
+            redis.hset("user:${user.id}", mapOf(
+                "id" to user.id,
+                "username" to user.username,
+                "email" to user.email // Füge das email-Attribut hinzu
+            ))
         } else {
             // Optional: Fehlermeldung, wenn der Benutzer nicht existiert
             println("Benutzer mit ID ${user.id} existiert nicht.")
@@ -30,13 +35,16 @@ class UserRepository(private val redis: Jedis) {
     }
 
     fun getUserById(id: String): User? {
-        // Verwende `HGET` um den Benutzer abzurufen
-        val userId = redis.hget("user:$id", "id")
-        val userName = redis.hget("user:$id", "username")
-        val userPassword = redis.hget("user:$id", "password")
+        // Verwende `HGETALL` um alle Attribute des Benutzers abzurufen
+        val userData = redis.hgetAll("user:$id")
 
-        if (userId != null && userName != null) {
-            return User(id = userId, username = userName, password = userPassword) // Erstelle ein User-Objekt aus den abgerufenen Daten
+        val userId = userData["id"]
+        val userName = userData["username"]
+        val userEmail = userData["email"] // Füge das email-Attribut hinzu
+        val userPassword = userData["password"]
+
+        if (userId != null && userName != null && userEmail != null) {
+            return userPassword?.let { User(id = userId, username = userName, email = userEmail, password = it) } // Erstelle ein User-Objekt aus den abgerufenen Daten
         }
         return null
     }
