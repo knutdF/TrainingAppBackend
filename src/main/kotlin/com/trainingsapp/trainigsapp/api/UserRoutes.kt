@@ -1,62 +1,52 @@
 package com.trainingsapp.trainigsapp.api
 
+
 import com.trainingsapp.trainigsapp.model.User
-import com.trainingsapp.trainigsapp.repository.UserRepository
 import com.trainingsapp.trainigsapp.service.UserService
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.http.*
-import redis.clients.jedis.Jedis
+import io.ktor.client.plugins.logging.* // Import für das Logging-Feature
+import org.slf4j.LoggerFactory
+
 
 fun Route.userApi(userService: UserService) {
     route("/user") {
         post {
-            val jedis = Jedis("0.0.0.0", 6451)
-
-            val user = call.receive<User>() // Benutzerdaten aus der Anfrage extrahieren
-            userService.createUser(user)
-            call.respond(HttpStatusCode.Created) // Antwort mit HTTP 201 Created
+            val user = call.receive<User>()
+            val createdUser = userService.createUser(user)
+            call.respond(HttpStatusCode.Created, createdUser)
         }
 
         get("/{id}") {
-            val userRepository = UserRepository(Jedis("0.0.0.0", 6451))
 
+            val logger = LoggerFactory.getLogger("MyLogger")
             val id = call.parameters["id"] ?: throw IllegalArgumentException("ID is missing")
+            val user = userService.getUserById(id)
+            logger.info("This is an info message")
+            logger.error("This is an error message")
+            call.respond(HttpStatusCode.OK, user)
+            call.respondText("User with ID: $id")
 
-            // Daten aus dem UserRepository abrufen
-            val user = userRepository.getUserById(id)
-
-            if (user != null) {
-                call.respond(HttpStatusCode.OK, user)
-            } else {
-                call.respond(HttpStatusCode.NotFound, "User not found")
-            }
         }
 
-
         put {
-            val jedis = Jedis("0.0.0.0", 6451)
-
-            val user = call.receive<User>() // Benutzerdaten aus der Anfrage extrahieren
-
-            // Daten in Redis aktualisieren
-            jedis.hset(user.id, "name", user.username)
-            jedis.hset(user.id, "email", user.email)
-
-            call.respond(HttpStatusCode.NoContent) // Antwort mit HTTP 204 No Content
+            val user = call.receive<User>()
+            val updatedUser = userService.updateUser(user)
+            call.respond(HttpStatusCode.OK, updatedUser)
         }
 
         delete("/{id}") {
-            val jedis = Jedis("0.0.0.0", 6451)
-
             val id = call.parameters["id"] ?: throw IllegalArgumentException("ID is missing")
-
-            // Benutzer aus Redis löschen
-            jedis.del(id)
-
-            call.respond(HttpStatusCode.NoContent) // Antwort mit HTTP 204 No Content
+            userService.deleteUser(id)
+            call.respond(HttpStatusCode.NoContent)
         }
+
+
+      }
+
     }
-}
+
+
