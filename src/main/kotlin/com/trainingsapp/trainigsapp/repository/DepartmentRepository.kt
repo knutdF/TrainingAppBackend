@@ -17,5 +17,13 @@ class DepartmentRepository(private val redis: Jedis) {
         // ...
     }
 
+    fun updateDepartment(department: Department) {
+
+    }
+
+    fun deleteDepartment(id: String) {
+
+    }
+
     // ... Weitere CRUD-Operationen (Update, Delete)
 }

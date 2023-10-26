@@ -8,7 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.client.plugins.logging.* // Import für das Logging-Feature
+// import io.ktor.client.plugins.logging.* // Import für das Logging-Feature
 import org.slf4j.LoggerFactory
 
 
@@ -21,21 +21,32 @@ fun Route.userApi(userService: UserService) {
         }
 
         get("/{id}") {
-
             val logger = LoggerFactory.getLogger("MyLogger")
             val id = call.parameters["id"] ?: throw IllegalArgumentException("ID is missing")
             val user = userService.getUserById(id)
-            logger.info("This is an info message")
-            logger.error("This is an error message")
-            call.respond(HttpStatusCode.OK, user)
-            call.respondText("User with ID: $id")
+            logger.debug("Abgerufener Benutzer vor dem Senden der Antwort: $user")
 
+            if (user != null) {
+                call.respond(user)
+            } else {
+                call.respond(HttpStatusCode.NotFound, "User with ID: $id not found")
+            }
         }
+
+
+
+
 
         put {
             val user = call.receive<User>()
+            val id = call.parameters["id"] ?: throw IllegalArgumentException("ID is missing")
+
             val updatedUser = userService.updateUser(user)
-            call.respond(HttpStatusCode.OK, updatedUser)
+            if (user != null) {
+                call.respond(user!!)
+            } else {
+                call.respond(HttpStatusCode.NotFound, "User with ID: $id not found")
+            }
         }
 
         delete("/{id}") {

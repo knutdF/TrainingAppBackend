@@ -1,11 +1,11 @@
 package com.trainingsapp.trainigsapp.service
 
 import com.trainingsapp.trainigsapp.model.User
-import com.trainingsapp.InMemoryUserRepository
+import com.trainingsapp.trainigsapp.repository.UserRepository
 
-class UserService(private val userRepository: InMemoryUserRepository) {
-    suspend fun createUser(user: User): Unit = userRepository.createUser(user)
-    suspend fun getUserById(id: String): Unit = userRepository.getUserById(id)
-    suspend fun updateUser(user: User): Unit = userRepository.updateUser(user)
-    suspend fun deleteUser(id: String): Unit = userRepository.deleteUser(id)
+class UserService(private val userRepository: UserRepository) {
+    fun createUser(user: User): User = userRepository.createUser(user)
+    fun getUserById(id: String): User? = userRepository.getUserById(id)
+    fun updateUser(user: User): User? = userRepository.updateUser(user)
+    fun deleteUser(id: String): Unit = userRepository.deleteUser(id)
 }

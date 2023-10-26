@@ -13,15 +13,14 @@ import com.trainingsapp.trainigsapp.service.DepartmentService
 import com.trainingsapp.trainigsapp.service.DocumentService
 import com.trainingsapp.trainigsapp.service.TrainingSessionService
 import com.trainingsapp.trainigsapp.service.UserService
-import io.ktor.client.plugins.logging.Logging.Companion.install
 import io.ktor.server.application.*
 import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.jackson.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.response.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.statuspages.*
 import org.slf4j.LoggerFactory
@@ -48,21 +47,23 @@ fun Application.module() {
         logger.info("Closed connection to Redis")
     }
 
+
     install(ContentNegotiation) {
-        jackson {
-        }
+        json()
     }
+
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
+            call.respond(HttpStatusCode.InternalServerError, cause.message.toString())
         }
     }
 
-    val userRepository = InMemoryUserRepository()
-    val documentRepository = InMemoryDocumentRepository<Any>()
-    val trainingSessionRepository = InMemoryTrainingSessionRepository<Any>()
-    val departmentRepository = InMemoryDepartmentRepository<Any>()
+
+    val userRepository = UserRepository(jedis)
+    val documentRepository = DocumentRepository(jedis)
+    val trainingSessionRepository = TrainingSessionRepository(jedis)
+    val departmentRepository = DepartmentRepository(jedis)
 
     val userService = UserService(userRepository)
     val documentService = DocumentService(documentRepository)
@@ -76,6 +77,7 @@ fun Application.module() {
         departmentApi(departmentService)
     }
 }
+
 
 fun main() {
     embeddedServer(Netty, port = 8081, module = Application::module).start(wait = true)

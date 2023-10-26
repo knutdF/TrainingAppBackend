@@ -17,5 +17,13 @@ class TrainingSessionRepository(private val redis: Jedis) {
         // ...
     }
 
+    fun updateSession(session: TrainingSession) {
+
+    }
+
+    fun deleteSession(id: String) {
+
+    }
+
     // ... Weitere CRUD-Operationen (Update, Delete)
 }

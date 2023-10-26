@@ -17,5 +17,13 @@ class DocumentRepository(private val redis: Jedis) {
         // ...
     }
 
+    fun updateDocument(document: Document) {
+
+    }
+
+    fun deleteDocument(id: String) {
+
+    }
+
     // ... Weitere CRUD-Operationen (Update, Delete)
 }
