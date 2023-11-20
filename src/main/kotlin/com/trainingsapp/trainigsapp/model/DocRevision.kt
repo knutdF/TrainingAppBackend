@@ -1,11 +1,12 @@
 package com.trainingsapp.trainigsapp.model
 
-import java.util.Date
+import java.time.LocalDateTime
 
-data class Revision(
-    val revisionId: Long,
-    val documentId: Long,
-    val revisionNumber: Int,
-    val revisionDate: Date, // Date type recommended
-    val changeDescription: String?,
+data class DocRevision(
+    val revisionId: Int = null,
+    val documentId: String,
+    val revisionNumber: Unit,
+    val revisionDate: LocalDateTime,
+    val changeDescription: String,
+    val responsibleEditor: String // Ensure this parameter exists
 )

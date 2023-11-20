@@ -9,6 +9,7 @@ import com.trainingsapp.trainigsapp.repository.DepartmentRepository
 import com.trainingsapp.trainigsapp.repository.DocumentRepository
 import com.trainingsapp.trainigsapp.repository.TrainingSessionRepository
 import com.trainingsapp.trainigsapp.repository.UserRepository
+import com.trainingsapp.trainigsapp.repository.RevisionRepository
 import com.trainingsapp.trainigsapp.service.DepartmentService
 import com.trainingsapp.trainigsapp.service.DocumentService
 import com.trainingsapp.trainigsapp.service.TrainingSessionService
@@ -30,7 +31,6 @@ import io.ktor.server.plugins.cors.CORS
 import io.ktor.server.plugins.cors.routing.*
 
 
-// ... (andere Importe, doppelte entfernt)
 
 
 
@@ -46,6 +46,7 @@ import io.ktor.server.plugins.cors.routing.*
         DocumentRepository(jedis)
         TrainingSessionRepository(jedis)
         DepartmentRepository(jedis)
+        RevisionRepository(jedis)
 
         environment.monitor.subscribe(ApplicationStopping) {
             jedis.close()
@@ -77,16 +78,19 @@ import io.ktor.server.plugins.cors.routing.*
         }
 
 
-
+        // Initialize repositories
         val userRepository = UserRepository(jedis)
         val documentRepository = DocumentRepository(jedis)
         val trainingSessionRepository = TrainingSessionRepository(jedis)
         val departmentRepository = DepartmentRepository(jedis)
+        val revisionRepository = RevisionRepository(jedis)
 
+        // Initialize services
         val userService = UserService(userRepository)
-        val documentService = DocumentService(documentRepository)
+        val documentService = DocumentService(documentRepository) // Only pass DocumentRepository
         val trainingSessionService = TrainingSessionService(trainingSessionRepository)
         val departmentService = DepartmentService(departmentRepository)
+
 
         routing {
             userApi(userService)
