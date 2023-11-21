@@ -45,13 +45,29 @@ fun Route.documentApi(documentService: DocumentService) {
 
 
     put("/{id}") {
-        val idFromPath = call.parameters["id"] ?: throw IllegalArgumentException("ID is missing")
         val documentFromBody = call.receive<Document>()
-        val changeDescription = // Retrieve change description from the request
-        val responsibleEditor = // Retrieve responsible editor from the request
+        val responsibleAuthor = documentFromBody.responsibleAuthor
 
-        val updatedDocument = documentService.updateDocument(documentFromBody, changeDescription, responsibleEditor)
-        // Handle the response...
+        // Extrahieren Sie die documentId aus dem Pfad
+        val documentId = call.parameters["id"] ?: throw IllegalArgumentException("Document ID is missing")
+
+        // Konstruieren Sie das zu aktualisierende Document-Objekt
+        val documentToUpdate = Document(
+            documentId = documentId.toLong(), // Annahme: documentId ist ein Long
+            title = updateRequest.title,
+            type = updateRequest.type,
+            // ... Weisen Sie die anderen Felder von updateRequest zu ...
+        )
+
+        // Aktualisieren des Dokuments
+        val updatedDocument = documentService.updateDocument(documentToUpdate, responsibleAuthor)
+
+        // Senden Sie eine Antwort zurück
+        if (updatedDocument != null) {
+            call.respond(HttpStatusCode.OK, updatedDocument)
+        } else {
+            call.respond(HttpStatusCode.NotFound, "Document with ID $documentId not found")
+        }
     }
 
     delete("/{id}") {

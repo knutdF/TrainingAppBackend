@@ -1,5 +1,6 @@
 package com.trainingsapp.trainigsapp.repository
 
+import com.trainingsapp.trainigsapp.model.Department
 import com.trainingsapp.trainigsapp.model.Document
 import com.trainingsapp.trainigsapp.model.DocRevision
 import org.slf4j.LoggerFactory
@@ -13,7 +14,7 @@ class DocumentRepository(private val redis: Jedis, private val revisionRepositor
 
     fun createDocument(document: Document): Document {
         try {
-            val documentId = generateUniqueId() // This should generate a Long
+            val documentId = generateUniqueId()
             val now = LocalDateTime.now()
 
             redis.hset(
@@ -30,22 +31,19 @@ class DocumentRepository(private val redis: Jedis, private val revisionRepositor
                     "updatedAt" to now.format(dateTimeFormatter)
                 )
             )
-            return document.copy(documentId = documentId.toString(), createdAt = now, updatedAt = now) // Use the generated Long documentId
+            return document.copy(documentId = documentId.toString(), createdAt = now, updatedAt = now)
         } catch (e: Exception) {
             logger.error("Error creating document", e)
             throw e
         }
     }
 
-
     fun updateDocument(document: Document, changeDescription: String, responsibleEditor: String): Document? {
         try {
             val documentKey = "document:${document.documentId}"
             if (redis.exists(documentKey)) {
                 val now = LocalDateTime.now()
-                val formattedNow = now.format(dateTimeFormatter)
 
-                // Update the document in Redis
                 redis.hset(
                     documentKey, mapOf(
                         "title" to document.title,
@@ -56,27 +54,25 @@ class DocumentRepository(private val redis: Jedis, private val revisionRepositor
                         "responsibleAuthor" to document.responsibleAuthor,
                         "status" to document.status,
                         "createdAt" to document.createdAt.format(dateTimeFormatter),
-                        "updatedAt" to formattedNow  // Use formatted string here
+                        "updatedAt" to now.format(dateTimeFormatter)
                     )
                 )
 
-                // Create a new revision
                 val revisionNumber = document.documentId?.let { getNextRevisionNumber(it) }
                 val newRevision = document.documentId?.let {
-                    if (revisionNumber != null) {
-                        DocRevision(
-                            revisionId = 0,
-                            documentId = it,
-                            revisionNumber = revisionNumber,
-                            revisionDate = now,  // Keep LocalDateTime here
-                            changeDescription = changeDescription,
-                            responsibleEditor = responsibleEditor
-                        )
-                    }
+                    DocRevision(
+                        revisionId = 0, // Wird im Repository generiert
+                        documentId = it,
+                        revisionNumber = revisionNumber,
+                        revisionDate = now,
+                        responsibleAuthor = responsibleEditor
+                    )
                 }
-                revisionRepository.createRevision(newRevision)
+                if (newRevision != null) {
+                    revisionRepository.createRevision(newRevision)
+                }
 
-                return document.copy(updatedAt = now)  // Use LocalDateTime object here
+                return document.copy(updatedAt = now)
             } else {
                 logger.warn("Document with ID ${document.documentId} does not exist.")
                 return null
@@ -87,83 +83,54 @@ class DocumentRepository(private val redis: Jedis, private val revisionRepositor
         }
     }
 
-
-
-    fun deleteDocument(id: String): Boolean {
-        return try {
-            if (redis.exists("document:$id")) {
-                redis.del("document:$id")
-                true
-            } else {
-                false
-            }
-        } catch (e: Exception) {
-            logger.error("Error deleting document", e)
-            throw e
-        }
+    private fun generateUniqueId(): Long {
+        // Logik zur Generierung einer einzigartigen ID für jedes Dokument
+        // Zum Beispiel könnte dies eine Zufallszahl oder eine Sequenznummer sein
+        // Beispiel:
+        return redis.incr("documentId:counter")
     }
 
-    fun getAllDocuments(): List<Document> {
-        try {
-            val documentKeys = redis.keys("document:*")
-            return documentKeys.mapNotNull { key ->
-                val documentData = redis.hgetAll(key)
-                if (documentData.isNotEmpty()) {
-                    Document(
-                        documentId = (documentData["documentId"]?.toLong() ?: 0L).toString(),
-                        title = documentData["title"] ?: "",
-                        type = documentData["type"],
-                        creationDate = LocalDateTime.parse(documentData["creationDate"] ?: LocalDateTime.now().toString()),
-                        lastReviewDate = LocalDateTime.parse(documentData["lastReviewDate"] ?: LocalDateTime.now().toString()),
-                        responsibleAuthor = documentData["responsibleAuthor"] ?: "",
-                        status = documentData["status"] ?: "",
-                        createdAt = LocalDateTime.parse(documentData["createdAt"] ?: LocalDateTime.now().toString()),
-                        updatedAt = LocalDateTime.parse(documentData["updatedAt"] ?: LocalDateTime.now().toString())
-                    )
-                } else {
-                    logger.error("Document data for key $key is empty or missing.")
-                    null
-                }
-            }
-        } catch (e: Exception) {
-            logger.error("Error fetching all documents", e)
-            throw e
-        }
+    private fun getNextRevisionNumber(documentId: String): Int {
+        // Logik zur Bestimmung der nächsten Revisionsnummer für das gegebene Dokument
+        // Beispiel:
+        val revisionCounterKey = "revision:counter:$documentId"
+        return redis.incr(revisionCounterKey).toInt()
     }
 
-    fun getDocumentById(id: String): Document? {
+    fun getDocumentById(documentId: String): Document? {
         try {
-            val documentData = redis.hgetAll("document:$id")
+            val documentData = redis.hgetAll("document:$documentId")
             if (documentData.isNotEmpty()) {
                 return Document(
-                    documentId = (documentData["documentId"]?.toLong() ?: 0L).toString(),
+                    documentId = documentData["documentId"] ?: "",
                     title = documentData["title"] ?: "",
                     type = documentData["type"],
-                    creationDate = LocalDateTime.parse(documentData["creationDate"] ?: LocalDateTime.now().toString()),
-                    lastReviewDate = LocalDateTime.parse(documentData["lastReviewDate"] ?: LocalDateTime.now().toString()),
+                    departmentid = documentData["departmentid"],
+                    creationDate = LocalDateTime.parse(documentData["creationDate"], dateTimeFormatter),
+                    lastReviewDate = LocalDateTime.parse(documentData["lastReviewDate"], dateTimeFormatter),
                     responsibleAuthor = documentData["responsibleAuthor"] ?: "",
                     status = documentData["status"] ?: "",
-                    createdAt = LocalDateTime.parse(documentData["createdAt"] ?: LocalDateTime.now().toString()),
-                    updatedAt = LocalDateTime.parse(documentData["updatedAt"] ?: LocalDateTime.now().toString())
+                    createdAt = LocalDateTime.parse(documentData["createdAt"], dateTimeFormatter),
+                    updatedAt = LocalDateTime.parse(documentData["updatedAt"], dateTimeFormatter)
                 )
             } else {
                 return null
             }
         } catch (e: Exception) {
-            logger.error("Error fetching document by ID", e)
+            logger.error("Error fetching document by ID $documentId", e)
             throw e
         }
     }
 
-    private fun generateUniqueId() {
-        // Implement logic to generate a unique ID for each document
+
+    private fun deleteDocument(documentId: String) {
+        // Logik zur Löschung eines Dokuments anhand seiner ID
+        // Beispiel:
+        val documentKey = "document:$documentId"
+        redis.del(documentKey)
     }
 
-    private fun getNextRevisionNumber(documentId: String) {
-        // Implement logic to get the next revision number for the given document
-    }
 
 
+    // ... Weitere Methoden für deleteDocument, getAllDocuments, getDocumentById ...
 }
-
-

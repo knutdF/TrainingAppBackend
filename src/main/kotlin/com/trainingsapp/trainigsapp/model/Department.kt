@@ -1,7 +1,7 @@
 package com.trainingsapp.trainigsapp.model
 
-import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 @Serializable
 data class Department(
@@ -11,7 +11,15 @@ data class Department(
     val members: List<String>? = null,
     val head: String? = null,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val documentId: String,
+    val title: String,
+    val type: String,
+    val departmentid: String,
+    val creationDate: LocalDateTime,
+    val lastReviewDate: LocalDateTime,
+    val responsibleAuthor: String,
+    val status: String
 )
 
 

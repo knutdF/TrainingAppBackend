@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 class RevisionRepository(private val redis: Jedis) {
     private val logger = LoggerFactory.getLogger(RevisionRepository::class.java)
     private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    private val revisionCounterKey = "revision:counter"
 
     fun createRevision(revision: DocRevision): DocRevision {
         try {
@@ -18,11 +19,10 @@ class RevisionRepository(private val redis: Jedis) {
             redis.hset(
                 "revision:$revisionId", mapOf(
                     "revisionId" to revisionId.toString(),
-                    "documentId" to revision.documentId.toString(),
-                    "revisionNumber" to revision.revisionNumber.toString(),
-                    "revisionDate" to now.format(dateTimeFormatter),
-                    "changeDescription" to (revision.changeDescription ?: ""),
-                    "responsibleEditor" to revision.responsibleEditor
+                    "documentId" to revision.documentId,
+                    "revisionNumber" to revision.revisionNumber.toString(), // Konvertieren Sie revisionNumber in einen String
+                    "revisionDate" to now.format(dateTimeFormatter) // Stellen Sie sicher, dass auch dies ein String ist
+                    // "changeDescription" und "responsibleEditor" hinzufügen, falls benötigt
                 )
             )
             return revision.copy(revisionId = revisionId, revisionDate = now)
@@ -32,7 +32,7 @@ class RevisionRepository(private val redis: Jedis) {
         }
     }
 
-    private fun generateUniqueId(): Long {
-        // Implementieren Sie hier die Logik zur Generierung einer eindeutigen ID
+    private fun generateUniqueId(): Int {
+        return redis.incr(revisionCounterKey).toInt()
     }
 }

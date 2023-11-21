@@ -1,12 +1,12 @@
 package com.trainingsapp.trainigsapp.model
 
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
-
+@Serializable
 data class DocRevision(
-    val revisionId: Int = null,
+    val revisionId: Int? = null,
     val documentId: String,
-    val revisionNumber: Unit,
+    val revisionNumber: Int?,
     val revisionDate: LocalDateTime,
-    val changeDescription: String,
-    val responsibleEditor: String // Ensure this parameter exists
+    val responsibleAuthor: String? = null // Ensure this parameter exists
 )
