@@ -1,0 +1,37 @@
+name: SOUP Inventory
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pip-licenses
+        
+    - name: Generate SOUP inventory
+      run: |
+        pip-licenses --format=json --output-file=soup_inventory.json
+        
+    - name: Commit SOUP inventory
+      uses: EndBug/add-and-commit@v9
+      with:
+        add: soup_inventory.json
+        message: 'Update SOUP inventory'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
